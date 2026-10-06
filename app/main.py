@@ -293,6 +293,15 @@ def get_diff_patch():
     }
 
 
+@app.get("/api/autonomous-heal")
+@app.post("/api/autonomous-heal")
+def api_autonomous_heal():
+    """Runs the zero-touch autonomous self-healing loop and returns results."""
+    from scripts.autonomous_heal import run_autonomous_heal
+    result = run_autonomous_heal()
+    return result
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host="0.0.0.0", port=8080, reload=True)
