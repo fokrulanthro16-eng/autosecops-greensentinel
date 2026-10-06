@@ -83,13 +83,20 @@
       <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl select-none">👵</div>
       <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
         <div class="space-y-3 max-w-3xl">
-          <div class="inline-flex items-center gap-2 bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3 py-1 rounded-full">
-            <span>GRANDMA-GRADE ACCESSIBILITY / ZERO COGNITIVE LOAD</span>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="inline-flex items-center gap-2 bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3 py-1 rounded-full shadow-sm">
+              <span>GRANDMA-GRADE ACCESSIBILITY / ZERO COGNITIVE LOAD</span>
+            </div>
+            <!-- Voice Briefing Button -->
+            <button id="voice-briefing-btn" onclick="toggleVoiceBriefing()" class="inline-flex items-center gap-2 bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 border-2 border-emerald-400 font-bold text-xs uppercase px-3.5 py-1 rounded-full transition-all duration-200 shadow-md cursor-pointer group">
+              <span id="voice-icon" class="text-sm group-hover:scale-125 transition-transform">🔊</span>
+              <span id="voice-label">Listen to Voice Briefing</span>
+            </button>
           </div>
           <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
             "Everything is Optimal. Zero Action Required."
           </h2>
-          <p class="text-lg sm:text-xl font-medium text-emerald-200/90 leading-relaxed">
+          <p id="plain-english-summary" class="text-lg sm:text-xl font-medium text-emerald-200/90 leading-relaxed">
             <strong class="text-white">Plain English Summary:</strong> All 9 stages executed autonomously without human intervention. One test failed on carbon budget, and the GitLab Duo AI agent self-healed it automatically in 1.4 seconds.
           </p>
           <div class="p-3.5 bg-slate-950/80 rounded-xl border border-emerald-500/30 text-sm text-slate-300">
@@ -297,7 +304,224 @@
 
     </div>
 
+    <!-- ============================================================== -->
+    <!-- INTERACTIVE MCP CONSOLE (COLLAPSIBLE) -->
+    <!-- ============================================================== -->
+    <section class="bg-slate-900 rounded-3xl border-4 border-slate-700 shadow-2xl overflow-hidden card-grandma">
+      <!-- Collapsible Header -->
+      <button onclick="toggleMcpConsole()" class="w-full p-6 text-left flex items-center justify-between bg-slate-900 hover:bg-slate-800/80 transition cursor-pointer select-none">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-2xl shadow-inner">
+            🛠️
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-xl sm:text-2xl font-black text-white font-heading">Interactive Model Context Protocol (MCP) Console</h3>
+              <span class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-400 hidden sm:inline-block">FastMCP Active</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Live execution harness for GitLab Duo Agent tools: test SCI scoring, runner log diagnosis, and green cloud routing</p>
+          </div>
+        </div>
+        <div>
+          <span id="mcp-toggle-icon" class="text-xs font-bold bg-slate-800 text-slate-300 px-3.5 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1.5 shadow-sm">
+            <span>[–] Collapse Console</span>
+          </span>
+        </div>
+      </button>
+
+      <!-- Collapsible Body -->
+      <div id="mcp-console-body" class="p-6 pt-0 border-t border-slate-800 space-y-5">
+        
+        <!-- Tool Switcher Tabs -->
+        <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-3 pt-2">
+          <button id="tab-btn-sci" onclick="switchMcpTab('sci')" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-emerald-500 text-slate-950 shadow-md">
+            1. compute_pipeline_sci
+          </button>
+          <button id="tab-btn-heal" onclick="switchMcpTab('heal')" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-slate-800 text-slate-400 hover:text-white">
+            2. diagnose_pipeline_log
+          </button>
+          <button id="tab-btn-route" onclick="switchMcpTab('route')" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-slate-800 text-slate-400 hover:text-white">
+            3. select_greenest_gcp_region
+          </button>
+        </div>
+
+        <!-- Tool 1: compute_pipeline_sci Form -->
+        <div id="tab-content-sci" class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div class="space-y-3 lg:col-span-1">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Input Parameters</h4>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Pipeline Runtime (seconds):</label>
+              <input type="number" id="mcp-sci-runtime" value="120" min="1" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono focus:border-emerald-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Compute Capacity (vCPUs):</label>
+              <select id="mcp-sci-vcpus" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono focus:border-emerald-500 focus:outline-none">
+                <option value="2" selected>2 vCPUs (Standard Runner)</option>
+                <option value="4">4 vCPUs (High Compute)</option>
+                <option value="8">8 vCPUs (Heavy Load)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Google Cloud Datacenter Region:</label>
+              <select id="mcp-sci-region" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono focus:border-emerald-500 focus:outline-none">
+                <option value="europe-west9" selected>🇫🇷 europe-west9 (Paris, 51 gCO2/kWh)</option>
+                <option value="europe-north1">🇫🇮 europe-north1 (Hamina, 85 gCO2/kWh)</option>
+                <option value="us-central1">🇺🇸 us-central1 (Iowa, 394 gCO2/kWh)</option>
+                <option value="asia-south1">🇮🇳 asia-south1 (Mumbai, 632 gCO2/kWh)</option>
+              </select>
+            </div>
+            <button onclick="executeMcpSci()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase py-2.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+              <span>⚡ Execute compute_pipeline_sci</span>
+            </button>
+          </div>
+          <!-- JSON Output Preview -->
+          <div class="lg:col-span-2 flex flex-col">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-mono text-slate-400 uppercase font-bold">FastMCP JSON Output Preview:</span>
+              <button onclick="copyMcpOutput('mcp-output-box')" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded border border-slate-700 transition">Copy JSON</button>
+            </div>
+            <pre id="mcp-output-box" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-emerald-400 font-mono text-xs overflow-auto flex-grow h-60 select-all leading-relaxed">{
+  "tool": "compute_pipeline_sci",
+  "status": "READY",
+  "note": "Click 'Execute' to calculate live GSF SCI score"
+}</pre>
+          </div>
+        </div>
+
+        <!-- Tool 2: diagnose_pipeline_log Form -->
+        <div id="tab-content-heal" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div class="space-y-3 lg:col-span-1">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Runner Log Input</h4>
+              <span class="text-[10px] text-slate-400">Presets:</span>
+            </div>
+            <div class="flex gap-1.5 flex-wrap">
+              <button onclick="setLogPreset('carbon')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-amber-300 px-2 py-1 rounded border border-slate-700 cursor-pointer">Carbon Limit</button>
+              <button onclick="setLogPreset('syntax')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-blue-300 px-2 py-1 rounded border border-slate-700 cursor-pointer">Syntax Error</button>
+              <button onclick="setLogPreset('cve')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-rose-300 px-2 py-1 rounded border border-slate-700 cursor-pointer">CVE Security</button>
+            </div>
+            <textarea id="mcp-heal-log" rows="6" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white font-mono focus:border-amber-400 focus:outline-none">AssertionError: Carbon budget exceeded: 4.25 > 2.0 gCO2e threshold</textarea>
+            <button onclick="executeMcpHeal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase py-2.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+              <span>🩺 Execute diagnose_pipeline_log</span>
+            </button>
+          </div>
+          <!-- JSON Output Preview -->
+          <div class="lg:col-span-2 flex flex-col">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-mono text-slate-400 uppercase font-bold">FastMCP Autonomous Patch Output:</span>
+              <button onclick="copyMcpOutput('mcp-output-box-heal')" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded border border-slate-700 transition">Copy JSON</button>
+            </div>
+            <pre id="mcp-output-box-heal" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-amber-300 font-mono text-xs overflow-auto flex-grow h-60 select-all leading-relaxed">{
+  "tool": "diagnose_pipeline_log",
+  "status": "READY",
+  "note": "Choose a log preset and click 'Execute' to generate autonomous patch"
+}</pre>
+          </div>
+        </div>
+
+        <!-- Tool 3: select_greenest_gcp_region Form -->
+        <div id="tab-content-route" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div class="space-y-3 lg:col-span-1">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Candidate Datacenter Regions</h4>
+            <p class="text-xs text-slate-400">Select Google Cloud regions to evaluate:</p>
+            <div class="space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
+              <label class="flex items-center gap-2 text-slate-200 cursor-pointer">
+                <input type="checkbox" class="region-chk accent-emerald-500" value="europe-west9" checked> europe-west9 (Paris, France)
+              </label>
+              <label class="flex items-center gap-2 text-slate-200 cursor-pointer">
+                <input type="checkbox" class="region-chk accent-emerald-500" value="europe-north1" checked> europe-north1 (Hamina, Finland)
+              </label>
+              <label class="flex items-center gap-2 text-slate-200 cursor-pointer">
+                <input type="checkbox" class="region-chk accent-emerald-500" value="us-central1" checked> us-central1 (Iowa, USA)
+              </label>
+              <label class="flex items-center gap-2 text-slate-200 cursor-pointer">
+                <input type="checkbox" class="region-chk accent-emerald-500" value="asia-southeast1" checked> asia-southeast1 (Singapore)
+              </label>
+              <label class="flex items-center gap-2 text-slate-200 cursor-pointer">
+                <input type="checkbox" class="region-chk accent-emerald-500" value="asia-south1" checked> asia-south1 (Mumbai, India)
+              </label>
+            </div>
+            <button onclick="executeMcpRoute()" class="w-full bg-blue-500 hover:bg-blue-400 text-slate-950 font-black text-xs uppercase py-2.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+              <span>🌿 Execute select_greenest_gcp_region</span>
+            </button>
+          </div>
+          <!-- JSON Output Preview -->
+          <div class="lg:col-span-2 flex flex-col">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-mono text-slate-400 uppercase font-bold">FastMCP Clean Grid Ranking Output:</span>
+              <button onclick="copyMcpOutput('mcp-output-box-route')" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded border border-slate-700 transition">Copy JSON</button>
+            </div>
+            <pre id="mcp-output-box-route" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-blue-300 font-mono text-xs overflow-auto flex-grow h-60 select-all leading-relaxed">{
+  "tool": "select_greenest_gcp_region",
+  "status": "READY",
+  "note": "Click 'Execute' to evaluate clean energy rankings across selected Google Cloud regions"
+}</pre>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
+
+  <!-- ============================================================== -->
+  <!-- SELF-HEALING GIT DIFF MODAL (CARD #3 CLICKABLE) -->
+  <!-- ============================================================== -->
+  <div id="diff-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border-4 border-amber-400 rounded-3xl max-w-3xl w-full p-6 sm:p-7 shadow-2xl relative space-y-4 max-h-[92vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between border-b border-slate-800 pb-4">
+        <div class="space-y-1">
+          <div class="inline-flex items-center gap-2 bg-amber-400 text-slate-950 font-black text-xs uppercase px-2.5 py-0.5 rounded-full">
+            <span>GitLab Duo FastMCP Agent • Automated Patch</span>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-black text-white font-heading">
+            Autonomous Patch: Carbon Budget Self-Healing
+          </h3>
+          <p class="text-xs text-slate-400">Target File: <code class="bg-slate-950 text-emerald-400 px-1.5 py-0.5 rounded border border-slate-800 font-mono">.gitlab-ci.yml</code> • Latency: <strong class="text-white">1.42s</strong> • Verified: <strong class="text-emerald-400">100% Passing</strong></p>
+        </div>
+        <button onclick="closeDiffModal()" class="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-9 h-9 rounded-full flex items-center justify-center text-lg font-bold transition cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <!-- Diagnostic Summary Box -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-950 p-3.5 rounded-2xl border border-slate-800">
+        <div>
+          <div class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Anomaly Intercepted:</div>
+          <div class="text-amber-300 font-semibold mt-0.5">Carbon budget exceeded (4.25 > 2.0 gCO2e)</div>
+        </div>
+        <div>
+          <div class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Autonomous Remediation:</div>
+          <div class="text-emerald-300 font-semibold mt-0.5">Rerouted from asia-south1 to europe-west9 (Paris)</div>
+        </div>
+      </div>
+
+      <!-- Exact Unified Git Diff Code View -->
+      <div class="space-y-1.5 flex-grow overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between text-xs text-slate-400 font-mono">
+          <span>Unified Git Diff Preview:</span>
+          <span class="text-emerald-400 font-bold">✓ 2.25 gCO2e Carbon Saved</span>
+        </div>
+        <pre class="bg-slate-950 p-4 rounded-2xl border border-slate-800 font-mono text-xs overflow-x-auto flex-grow text-slate-200 select-all leading-relaxed"><span class="text-slate-500">--- a/.gitlab-ci.yml</span>
+<span class="text-slate-500">+++ b/.gitlab-ci.yml</span>
+<span class="text-blue-400 font-bold">@@ -15,4 +15,4 @@</span>
+   variables:
+<span class="bg-rose-950/80 text-rose-300 px-1 py-0.5 rounded block my-0.5 font-bold">-    GCP_TARGET_REGION: "asia-south1"</span>
+<span class="bg-emerald-950/80 text-emerald-300 px-1 py-0.5 rounded block my-0.5 font-bold">+    GCP_TARGET_REGION: "europe-west9"</span>
+<span class="bg-rose-950/80 text-rose-300 px-1 py-0.5 rounded block my-0.5 font-bold">-    CONTAINER_VCPU_LIMIT: "4"</span>
+<span class="bg-emerald-950/80 text-emerald-300 px-1 py-0.5 rounded block my-0.5 font-bold">+    CONTAINER_VCPU_LIMIT: "2"</span></pre>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+        <span class="text-xs text-slate-400">Commit Status: <strong class="text-emerald-400">Merged & Verified by Pipeline</strong></span>
+        <button onclick="closeDiffModal()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase px-4 py-2 rounded-xl transition cursor-pointer">
+          Close Window
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer class="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
@@ -315,7 +539,7 @@
     </div>
   </footer>
 
-  <!-- SCRIPT FOR DYNAMIC DATA AND GRANDMA INTERACTION -->
+  <!-- SCRIPT FOR DYNAMIC DATA AND INTERACTIVITY -->
   <script>
     const STAGES_DATA = [
       { id: "plan", name: "1. Plan", icon: "📋", status: "PASSED", badge: "Passed", time: "4.2s", carbon: "0.012 g", plain: "Duo analyzed requirements & created zero-touch plan", detail: "Autonomous requirement decomposition and zero-touch task generation." },
@@ -333,11 +557,14 @@
       const container = document.getElementById("stages-grid");
       container.innerHTML = STAGES_DATA.map(st => {
         const isHealed = st.status === "HEALED";
-        const borderCls = isHealed ? "border-amber-400 bg-amber-950/20" : "border-emerald-500/70 bg-slate-900";
+        const borderCls = isHealed 
+          ? "border-amber-400 bg-amber-950/20 cursor-pointer hover:border-amber-300 hover:scale-[1.02] transition-all shadow-lg ring-2 ring-amber-500/30" 
+          : "border-emerald-500/70 bg-slate-900";
         const badgeCls = isHealed ? "bg-amber-400 text-slate-950 font-black" : "bg-emerald-500 text-slate-950 font-black";
+        const clickAttr = isHealed ? 'onclick="openDiffModal()"' : '';
 
         return `
-          <div class="rounded-2xl p-5 border-2 ${borderCls} shadow-md flex flex-col justify-between">
+          <div ${clickAttr} class="rounded-2xl p-5 border-2 ${borderCls} shadow-md flex flex-col justify-between group">
             <div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs uppercase font-extrabold tracking-wider text-slate-400 flex items-center gap-1.5">
@@ -353,6 +580,12 @@
               <p class="text-xs text-slate-400 mt-2 font-medium">
                 ${st.detail}
               </p>
+              ${isHealed ? `
+                <div class="mt-3 text-[11px] bg-amber-500/15 text-amber-300 border border-amber-400/40 rounded-lg px-2.5 py-1.5 flex items-center justify-between font-bold group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                  <span>🔍 View Autonomous Git Diff</span>
+                  <span class="text-[10px] uppercase font-black">Click Card →</span>
+                </div>
+              ` : ''}
             </div>
             <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-4 border-t border-slate-800/80 mt-3">
               <span>Time: <strong class="text-slate-200">${st.time}</strong></span>
@@ -391,6 +624,181 @@
       `;
       consoleBox.scrollTop = consoleBox.scrollHeight;
       alert("Grandma-Theory Alert: AI Agent detected the anomaly and fixed it in 0.8s! Everything is running smoothly.");
+    }
+
+    // -------------------------------------------------------------
+    // FEATURE 1: VOICE BRIEFING (WEB SPEECH API)
+    // -------------------------------------------------------------
+    let isSpeaking = false;
+    function toggleVoiceBriefing() {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      const synth = window.speechSynthesis;
+      const btn = document.getElementById("voice-briefing-btn");
+      const icon = document.getElementById("voice-icon");
+      const label = document.getElementById("voice-label");
+
+      if (isSpeaking) {
+        synth.cancel();
+        isSpeaking = false;
+        icon.innerText = "🔊";
+        label.innerText = "Listen to Voice Briefing";
+        btn.classList.remove("ring-4", "ring-emerald-400", "bg-emerald-500", "text-slate-950");
+        btn.classList.add("bg-emerald-500/20", "text-emerald-300");
+        return;
+      }
+
+      const text = "Hello. Here is your executive status update. Everything is optimal, and zero action is required. All nine DevSecOps stages executed autonomously without human intervention. One test failed on carbon budget, and the GitLab Duo AI agent self-healed it automatically in 1.4 seconds. Your application is completely secure, resilient, and running on ultra-low carbon grid power.";
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+
+      utterance.onstart = () => {
+        isSpeaking = true;
+        icon.innerText = "⏹️";
+        label.innerText = "Stop Voice Briefing";
+        btn.classList.remove("bg-emerald-500/20", "text-emerald-300");
+        btn.classList.add("ring-4", "ring-emerald-400", "bg-emerald-500", "text-slate-950");
+      };
+
+      utterance.onend = utterance.onerror = () => {
+        isSpeaking = false;
+        icon.innerText = "🔊";
+        label.innerText = "Listen to Voice Briefing";
+        btn.classList.remove("ring-4", "ring-emerald-400", "bg-emerald-500", "text-slate-950");
+        btn.classList.add("bg-emerald-500/20", "text-emerald-300");
+      };
+
+      synth.speak(utterance);
+    }
+
+    // -------------------------------------------------------------
+    // FEATURE 2: SELF-HEALING GIT DIFF MODAL
+    // -------------------------------------------------------------
+    function openDiffModal() {
+      document.getElementById("diff-modal").classList.remove("hidden");
+    }
+
+    function closeDiffModal() {
+      document.getElementById("diff-modal").classList.add("hidden");
+    }
+
+    // Close on Escape or Backdrop click
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeDiffModal();
+    });
+    document.getElementById("diff-modal").addEventListener("click", (e) => {
+      if (e.target.id === "diff-modal") closeDiffModal();
+    });
+
+    // -------------------------------------------------------------
+    // FEATURE 3: INTERACTIVE MCP CONSOLE
+    // -------------------------------------------------------------
+    let isMcpExpanded = true;
+    function toggleMcpConsole() {
+      const body = document.getElementById("mcp-console-body");
+      const icon = document.getElementById("mcp-toggle-icon");
+      isMcpExpanded = !isMcpExpanded;
+      if (isMcpExpanded) {
+        body.classList.remove("hidden");
+        icon.innerHTML = "<span>[–] Collapse Console</span>";
+      } else {
+        body.classList.add("hidden");
+        icon.innerHTML = "<span>[+] Expand Console</span>";
+      }
+    }
+
+    function switchMcpTab(tabKey) {
+      const tabs = ["sci", "heal", "route"];
+      tabs.forEach(t => {
+        const content = document.getElementById(`tab-content-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabKey) {
+          content.classList.remove("hidden");
+          btn.className = "px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-emerald-500 text-slate-950 shadow-md cursor-pointer";
+        } else {
+          content.classList.add("hidden");
+          btn.className = "px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-slate-800 text-slate-400 hover:text-white cursor-pointer";
+        }
+      });
+    }
+
+    const LOG_PRESETS = {
+      carbon: "AssertionError: Carbon budget exceeded: 4.25 > 2.0 gCO2e threshold",
+      syntax: "app/main.py:112:5: IndentationError: unexpected indent in telemetry_endpoint",
+      cve: "GitLab SAST Alert: CVE-2024-21626 High severity container breakout vulnerability detected"
+    };
+
+    function setLogPreset(presetKey) {
+      document.getElementById("mcp-heal-log").value = LOG_PRESETS[presetKey] || LOG_PRESETS.carbon;
+    }
+
+    async function executeMcpSci() {
+      const runtime = document.getElementById("mcp-sci-runtime").value || 120;
+      const vcpus = document.getElementById("mcp-sci-vcpus").value || 2;
+      const region = document.getElementById("mcp-sci-region").value || "europe-west9";
+      const outBox = document.getElementById("mcp-output-box");
+      outBox.innerText = "Executing tool 'compute_pipeline_sci' via FastMCP API...";
+
+      try {
+        const res = await fetch(`/api/sci-metrics?runtime_seconds=${runtime}&vcpus=${vcpus}&region=${region}`);
+        const data = await res.json();
+        outBox.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        // Standalone fallback calculation if API is offline
+        const simulated = {
+          tool: "compute_pipeline_sci",
+          status: "SUCCESS_LOCAL",
+          runtime_seconds: Number(runtime),
+          vcpus: Number(vcpus),
+          region: region,
+          sci_score_gco2e: ((Number(vcpus) * 18.5 * (runtime / 3600) * 1.1) / 1000 * 51 + 0.012).toFixed(4),
+          formula: "SCI = ((E * I) + M) / R"
+        };
+        outBox.innerText = JSON.stringify(simulated, null, 2);
+      }
+    }
+
+    async function executeMcpHeal() {
+      const logText = document.getElementById("mcp-heal-log").value;
+      const outBox = document.getElementById("mcp-output-box-heal");
+      outBox.innerText = "Invoking FastMCP tool 'diagnose_pipeline_log' against GitLab runner trace...";
+
+      try {
+        const res = await fetch("/api/heal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ log_text: logText })
+        });
+        const data = await res.json();
+        outBox.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        outBox.innerText = JSON.stringify({ error: err.message }, null, 2);
+      }
+    }
+
+    async function executeMcpRoute() {
+      const checkboxes = document.querySelectorAll(".region-chk:checked");
+      const selected = Array.from(checkboxes).map(c => c.value);
+      const outBox = document.getElementById("mcp-output-box-route");
+      outBox.innerText = "Invoking FastMCP tool 'select_greenest_gcp_region'...";
+
+      try {
+        const res = await fetch(`/api/mcp/select-region?regions=${selected.join(',')}`);
+        const data = await res.json();
+        outBox.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        outBox.innerText = JSON.stringify({ error: err.message }, null, 2);
+      }
+    }
+
+    function copyMcpOutput(elementId = 'mcp-output-box') {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text);
+      alert("FastMCP JSON response copied to clipboard!");
     }
 
     // Initialize

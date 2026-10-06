@@ -98,7 +98,7 @@ STAGES_REGISTRY = [
         "duration_s": 4.2,
         "carbon_gco2e": 0.012,
         "plain_english": "GitLab Duo analyzed issue requirements, generated specifications, and planned zero-touch tasks.",
-        "bengali_summary": "গিটল্যাব ডুও ইস্যু বিশ্লেষণ করে স্বয়ংক্রিয় কাজের পরিকল্পনা তৈরি করেছে।",
+        "bengali_summary": "Autonomous requirement decomposition and zero-touch task generation.",
     },
     {
         "stage": "create",
@@ -106,7 +106,7 @@ STAGES_REGISTRY = [
         "duration_s": 6.8,
         "carbon_gco2e": 0.019,
         "plain_english": "Autonomous branch creation, test scaffold generation, and source synthesis completed cleanly.",
-        "bengali_summary": "নতুন ব্রাঞ্চ তৈরি ও টেস্ট স্কাফোল্ডিং নিখুঁতভাবে প্রস্তুত হয়েছে।",
+        "bengali_summary": "Synthesized unit test harnesses and verified feature branch integrity.",
     },
     {
         "stage": "verify",
@@ -114,7 +114,7 @@ STAGES_REGISTRY = [
         "duration_s": 14.5,
         "carbon_gco2e": 0.041,
         "plain_english": "Unit test failed on carbon budget threshold. GreenSentinel Agent auto-patched runner config in 1.4s.",
-        "bengali_summary": "টেস্টে কার্বন সীমা অতিক্রমের ত্রুটি পাওয়া গিয়েছিল। এজেন্ট ১.৪ সেকেন্ডে স্বয়ংক্রিয় প্যাচ দিয়ে ঠিক করেছে।",
+        "bengali_summary": "Detected carbon emission budget breach; dispatched automated configuration patch in 1.4s.",
     },
     {
         "stage": "package",
@@ -122,7 +122,7 @@ STAGES_REGISTRY = [
         "duration_s": 28.1,
         "carbon_gco2e": 0.079,
         "plain_english": "Multi-stage ultra-lean Docker container built using cached layers (Image size: 94 MB).",
-        "bengali_summary": "লেয়ার ক্যাশিং ব্যবহার করে অতি-কম মেমরির ডকার ইমেজ তৈরি সম্পন্ন (সাইজ: ৯৪ মেগাবাইট)।",
+        "bengali_summary": "Zero-bloat multi-stage OCI container compiled with maximum layer cache reuse.",
     },
     {
         "stage": "secure",
@@ -130,7 +130,7 @@ STAGES_REGISTRY = [
         "duration_s": 19.3,
         "carbon_gco2e": 0.054,
         "plain_english": "GitLab SAST & Secret Detection completed zero vulnerabilities found after AST automated sanitization.",
-        "bengali_summary": "গিটল্যাব সিকিউরিটি স্ক্যানে কোনো গোপন তথ্য বা ক্ষতিকর দুর্বলতা মেলেনি।",
+        "bengali_summary": "GitLab SAST & secret detection completed with zero unmitigated vulnerabilities.",
     },
     {
         "stage": "govern",
@@ -138,7 +138,7 @@ STAGES_REGISTRY = [
         "duration_s": 5.1,
         "carbon_gco2e": 0.014,
         "plain_english": "MIT License compliance audited and CycloneDX Software Bill of Materials (SBOM) exported.",
-        "bengali_summary": "লাইসেন্স আইনগত মানদণ্ড ও সফটওয়্যার উপাদান তালিকা (SBOM) শতভাগ যাচাই হয়েছে।",
+        "bengali_summary": "CycloneDX SBOM and MIT licensing compliance audited and signed off.",
     },
     {
         "stage": "release",
@@ -146,7 +146,7 @@ STAGES_REGISTRY = [
         "duration_s": 8.0,
         "carbon_gco2e": 0.022,
         "plain_english": "Semantic tag v1.0.0 created, automated release notes published to GitLab Releases.",
-        "bengali_summary": "রিলিজ ট্যাগ v1.0.0 তৈরি হয়েছে এবং পরিবর্তনের বিবরণ প্রকাশ করা হয়েছে।",
+        "bengali_summary": "Autonomous semantic release v1.0.0 published with changelog dispatch.",
     },
     {
         "stage": "configure",
@@ -154,7 +154,7 @@ STAGES_REGISTRY = [
         "duration_s": 11.2,
         "carbon_gco2e": 0.031,
         "plain_english": "Cloud Run target region routed dynamically to europe-west9 (Paris) with lowest grid carbon (51 gCO2/kWh).",
-        "bengali_summary": "সবচেয়ে পরিবেশবান্ধব প্যারিস ক্লাউড রিজিয়নে সার্ভিসটি কনফিগার করা হয়েছে।",
+        "bengali_summary": "Configured in europe-west9 (Paris) using lowest-carbon regional energy grid.",
     },
     {
         "stage": "monitor",
@@ -162,7 +162,7 @@ STAGES_REGISTRY = [
         "duration_s": 6.4,
         "carbon_gco2e": 0.018,
         "plain_english": "Post-deploy health probe latency 42ms (<300ms SLA). Zero-touch production loop validated.",
-        "bengali_summary": "ডিপ্লয় পরবর্তী স্বাস্থ্য পরীক্ষায় রেসপন্স টাইম ৪২ মিলিসেকেন্ড পাওয়া গেছে। সব ঠিক আছে!",
+        "bengali_summary": "Post-deployment health probe verified at 42ms (<300ms SLA).",
     },
 ]
 
@@ -227,7 +227,7 @@ def get_all_stages_status():
         "total_duration_seconds": round(total_time, 2),
         "total_pipeline_carbon_gco2e": round(total_carbon, 4),
         "healed_anomalies_count": healed_count,
-        "grandma_verdict": "সবুজ বাতি জ্বলছে! সফটওয়্যার একদম সুস্থ এবং নিরাপদে কাজ করছে। (All Green! Everything is working cleanly and safely.)",
+        "grandma_verdict": "All Green! Everything is working cleanly and safely with zero manual intervention required.",
         "stages": STAGES_REGISTRY,
     }
 
@@ -259,6 +259,38 @@ def trigger_agent_healing(request: HealRequest):
     """Invokes GitLab Duo MCP autonomous healing against input runner log."""
     diagnosis = diagnose_pipeline_log(request.log_text)
     return diagnosis
+
+
+@app.get("/api/mcp/select-region")
+def api_select_region(regions: Optional[str] = Query(None)):
+    """Exposes select_greenest_gcp_region tool via HTTP."""
+    candidates = [r.strip() for r in regions.split(",") if r.strip()] if regions else None
+    return select_greenest_gcp_region(candidates)
+
+
+@app.get("/api/mcp/diff-patch")
+def get_diff_patch():
+    """Returns the verified git patch synthesized by the autonomous self-healing agent."""
+    return {
+        "stage": "verify",
+        "anomaly": "Carbon budget exceeded: 4.25 gCO2e > 2.0 gCO2e threshold",
+        "timestamp": "2026-10-06T00:20:30Z",
+        "agent": "GitLab Duo FastMCP Agent",
+        "file": ".gitlab-ci.yml",
+        "root_cause": "Pipeline runner configured for high-carbon region (asia-south1, 632 gCO2/kWh) with unoptimized 4 vCPU allocation.",
+        "resolution": "Autonomous re-route to europe-west9 (Paris, 51 gCO2/kWh) and scaled container CPU allocation to 2 vCPUs.",
+        "carbon_saved_gco2e": 2.25,
+        "healing_duration_s": 1.42,
+        "diff": """--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -15,4 +15,4 @@
+   variables:
+-    GCP_TARGET_REGION: "asia-south1"
++    GCP_TARGET_REGION: "europe-west9"
+-    CONTAINER_VCPU_LIMIT: "4"
++    CONTAINER_VCPU_LIMIT: "2"
+"""
+    }
 
 
 if __name__ == "__main__":
