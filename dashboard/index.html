@@ -283,9 +283,14 @@
               <p class="text-xs text-slate-400">Zero-Touch Real-Time Agent Intervention Stream</p>
             </div>
           </div>
-          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-500/40">
-            AUTO-ACTIVE
-          </span>
+          <div class="flex items-center gap-2">
+            <span id="circuit-breaker-badge" class="bg-blue-500/20 text-blue-300 text-xs font-bold px-2.5 py-1 rounded-full border border-blue-400/40">
+              ⚡ Circuit Breaker: CLOSED (0/2 Trips)
+            </span>
+            <span class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-500/40">
+              AUTO-ACTIVE
+            </span>
+          </div>
         </div>
 
         <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800 font-mono text-xs text-slate-300 h-52 overflow-y-auto space-y-2.5" id="agent-console">
