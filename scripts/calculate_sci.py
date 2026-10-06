@@ -67,6 +67,31 @@ DEFAULT_EMBODIED_M = 0.005         # 0.005 gCO2e embodied hardware emissions bas
 BASELINE_HIGH_CARBON_REGION = "us-east1"  # 480 gCO2/kWh
 
 
+def get_hardware_telemetry() -> Dict[str, Any]:
+    """Dynamically samples host hardware metrics via psutil for authentic GSF SCI telemetry."""
+    try:
+        import psutil
+        cpu_pct = psutil.cpu_percent(interval=0.05)
+        mem = psutil.virtual_memory()
+        return {
+            "cpu_percent": round(float(cpu_pct), 2),
+            "cpu_load": round(max(float(cpu_pct) / 100.0, 0.05) if cpu_pct > 0 else 0.50, 3),
+            "memory_used_mb": round(mem.used / (1024 * 1024), 2),
+            "memory_percent": round(float(mem.percent), 2),
+            "logical_cpus": int(psutil.cpu_count(logical=True) or 2),
+            "source": "psutil_live_telemetry",
+        }
+    except Exception:
+        return {
+            "cpu_percent": 50.0,
+            "cpu_load": 0.50,
+            "memory_used_mb": 512.0,
+            "memory_percent": 45.0,
+            "logical_cpus": 2,
+            "source": "fallback_estimation",
+        }
+
+
 @dataclass
 class SCIMetrics:
     runtime_seconds: float
@@ -78,6 +103,10 @@ class SCIMetrics:
     grid_intensity_gco2_kwh: float
     pue: float
     avg_cpu_load: float
+    cpu_percent: float
+    memory_used_mb: float
+    memory_percent: float
+    telemetry_source: str
     energy_kwh: float                    # E
     operational_carbon_gco2e: float      # E * I
     embodied_carbon_gco2e: float         # M
@@ -131,11 +160,14 @@ class SCICalculator:
         pue = reg_info["pue"]
         grid_i = reg_info["grid_intensity_gco2_kwh"]
 
+        hw = get_hardware_telemetry()
+        effective_cpu_load = avg_cpu_load if avg_cpu_load != DEFAULT_CPU_LOAD else hw["cpu_load"]
+
         # E = (Watts * Runtime_Hours * PUE) / 1000
         if vcpus is not None:
             active_watts = vcpus * 18.5
         else:
-            active_watts = effective_instances * STANDARD_INSTANCE_TDP_WATTS * avg_cpu_load
+            active_watts = effective_instances * STANDARD_INSTANCE_TDP_WATTS * effective_cpu_load
         energy_kwh = (active_watts * runtime_hours * pue) / 1000.0
 
         # Operational Carbon: E * I
@@ -167,7 +199,11 @@ class SCICalculator:
             location=reg_info["location"],
             grid_intensity_gco2_kwh=grid_i,
             pue=pue,
-            avg_cpu_load=avg_cpu_load,
+            avg_cpu_load=round(effective_cpu_load, 3),
+            cpu_percent=hw["cpu_percent"],
+            memory_used_mb=hw["memory_used_mb"],
+            memory_percent=hw["memory_percent"],
+            telemetry_source=hw["source"],
             energy_kwh=round(energy_kwh, 6),
             operational_carbon_gco2e=round(operational_gco2e, 4),
             embodied_carbon_gco2e=round(embodied_gco2e, 4),
@@ -254,8 +290,9 @@ def main():
         print("=" * 65)
         print(f" Region               : {metrics.region} ({metrics.location})")
         print(f" Grid Intensity (I)   : {metrics.grid_intensity_gco2_kwh} gCO2eq/kWh")
-        print(f" Datacenter PUE       : {metrics.pue}")
-        print(f" CPU Load             : {metrics.avg_cpu_load * 100:.0f}%")
+        print(f" CPU Utilization      : {metrics.cpu_percent}% (Load factor: {metrics.avg_cpu_load})")
+        print(f" Host Memory Profile  : {metrics.memory_used_mb} MB ({metrics.memory_percent}% utilization)")
+        print(f" Telemetry Source     : {metrics.telemetry_source}")
         print(f" Energy Consumed (E)  : {metrics.energy_kwh:.6f} kWh")
         print(f" Operational Carbon   : {metrics.operational_carbon_gco2e:.4f} gCO2eq")
         print(f" Embodied Carbon (M)  : {metrics.embodied_carbon_gco2e:.4f} gCO2eq")

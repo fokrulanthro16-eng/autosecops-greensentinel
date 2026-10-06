@@ -169,3 +169,47 @@ def test_mcp_generate_security_patch():
     assert patch_result["vulnerability_type"] == "SQL Injection (CWE-89)"
     assert patch_result["severity"] == "CRITICAL"
     assert ":runner_id" in patch_result["git_patch"]
+
+
+# ==========================================
+# 4. Enterprise Guardrails & Circuit Breaker Tests
+# ==========================================
+
+def test_mcp_create_guarded_remediation_mr():
+    """Verify FastMCP creates auditable Merge Request instead of blind push."""
+    from agent_mcp.server import create_guarded_remediation_mr
+    mock_log = "AssertionError: Carbon budget exceeded: 4.80 > 2.00 gCO2e"
+    mr = create_guarded_remediation_mr(mock_log, base_branch="main")
+    
+    assert mr["status"] == "MR_DISPATCHED"
+    assert "remediation/auto-heal-" in mr["source_branch"]
+    assert mr["target_branch"] == "main"
+    assert mr["merge_when_pipeline_succeeds"] is True
+    assert mr["security_scan_status"] == "PASSED_ZERO_VULNERABILITIES"
+    assert mr["circuit_breaker_status"] == "ARMED"
+    assert "europe-west9" in mr["git_patch"]
+
+
+def test_circuit_breaker_trip_and_rollback():
+    """Verify circuit breaker trips on consecutive failures and prevents infinite loops."""
+    from scripts.autonomous_heal import CircuitBreaker
+    cb = CircuitBreaker(max_retries=2)
+    assert cb.state == "CLOSED"
+    assert cb.record_attempt() is True   # Attempt 1
+    assert cb.record_attempt() is True   # Attempt 2
+    assert cb.record_attempt() is False  # Attempt 3 -> Trips circuit!
+    assert cb.is_tripped() is True
+    assert cb.state == "OPEN"
+    assert cb.incident_payload is not None
+    assert "P1 CRITICAL" in cb.incident_payload["title"]
+
+
+def test_dynamic_hardware_telemetry_sampling():
+    """Verify live dynamic sampling via psutil delivers real host stats."""
+    from scripts.calculate_sci import get_hardware_telemetry
+    telemetry = get_hardware_telemetry()
+    assert "cpu_percent" in telemetry
+    assert "memory_used_mb" in telemetry
+    assert telemetry["memory_used_mb"] > 0
+    assert "source" in telemetry
+

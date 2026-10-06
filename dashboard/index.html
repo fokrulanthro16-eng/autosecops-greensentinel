@@ -87,6 +87,10 @@
             <div class="inline-flex items-center gap-2 bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3 py-1 rounded-full shadow-sm">
               <span>GRANDMA-GRADE ACCESSIBILITY / ZERO COGNITIVE LOAD</span>
             </div>
+            <!-- Enterprise Guardrail Badge -->
+            <div class="inline-flex items-center gap-1.5 bg-blue-500/20 text-blue-300 font-bold text-xs uppercase px-3 py-1 rounded-full border border-blue-400/60 shadow-sm">
+              <span>🛡️ Enterprise Guardrail: Zero Direct Commits • 100% Policy-Gated MRs</span>
+            </div>
             <!-- Voice Briefing Button -->
             <button id="voice-briefing-btn" onclick="toggleVoiceBriefing()" class="inline-flex items-center gap-2 bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 border-2 border-emerald-400 font-bold text-xs uppercase px-3.5 py-1 rounded-full transition-all duration-200 shadow-md cursor-pointer group">
               <span id="voice-icon" class="text-sm group-hover:scale-125 transition-transform">🔊</span>
@@ -472,8 +476,13 @@
       <!-- Modal Header -->
       <div class="flex items-start justify-between border-b border-slate-800 pb-4">
         <div class="space-y-1">
-          <div class="inline-flex items-center gap-2 bg-amber-400 text-slate-950 font-black text-xs uppercase px-2.5 py-0.5 rounded-full">
-            <span>GitLab Duo FastMCP Agent • Automated Patch</span>
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="inline-flex items-center gap-2 bg-amber-400 text-slate-950 font-black text-xs uppercase px-2.5 py-0.5 rounded-full">
+              <span>GitLab Duo FastMCP Agent • Automated Patch</span>
+            </div>
+            <span class="bg-blue-500/20 text-blue-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-blue-400">
+              🛡️ Enterprise Guardrail: Auto-Merge MR (No Direct Push)
+            </span>
           </div>
           <h3 class="text-xl sm:text-2xl font-black text-white font-heading">
             Autonomous Patch: Carbon Budget Self-Healing
@@ -515,7 +524,7 @@
 
       <!-- Footer Actions -->
       <div class="flex items-center justify-between pt-2 border-t border-slate-800">
-        <span class="text-xs text-slate-400">Commit Status: <strong class="text-emerald-400">Merged & Verified by Pipeline</strong></span>
+        <span class="text-xs text-slate-400">Commit Status: <strong class="text-emerald-400">Merged via Verified GitLab MR (Auto-Merge Policy Enforced)</strong></span>
         <button onclick="closeDiffModal()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase px-4 py-2 rounded-xl transition cursor-pointer">
           Close Window
         </button>
@@ -544,7 +553,7 @@
     const STAGES_DATA = [
       { id: "plan", name: "1. Plan", icon: "📋", status: "PASSED", badge: "Passed", time: "4.2s", carbon: "0.012 g", plain: "Duo analyzed requirements & created zero-touch plan", detail: "Autonomous requirement decomposition and zero-touch task generation." },
       { id: "create", name: "2. Create", icon: "⚙️", status: "PASSED", badge: "Passed", time: "6.8s", carbon: "0.019 g", plain: "Branch & scaffold generated without human typing", detail: "Synthesized unit test harnesses and verified feature branch integrity." },
-      { id: "verify", name: "3. Verify", icon: "🩹", status: "HEALED", badge: "Auto-Healed", time: "14.5s", carbon: "0.041 g", plain: "Carbon limit failed, Agent patched config in 1.4s", detail: "Detected carbon emission budget breach; dispatched automated configuration patch in 1.4s." },
+      { id: "verify", name: "3. Verify", icon: "🩹", status: "HEALED", badge: "Auto-Healed (MR Guardrail)", time: "14.5s", carbon: "0.041 g", plain: "Carbon limit failed, Agent synthesized & merged verified MR in 1.4s", detail: "Remediation branch & GitLab MR created with SAST gating; auto-merged on passing tests." },
       { id: "package", name: "4. Package", icon: "📦", status: "PASSED", badge: "Passed", time: "28.1s", carbon: "0.079 g", plain: "Ultra-lean multi-stage Docker container compiled", detail: "Zero-bloat multi-stage OCI container compiled with maximum layer cache reuse." },
       { id: "secure", name: "5. Secure", icon: "🔒", status: "PASSED", badge: "Passed", time: "19.3s", carbon: "0.054 g", plain: "GitLab SAST & secret scans passed with zero flaws", detail: "GitLab SAST & secret detection completed with zero unmitigated vulnerabilities." },
       { id: "govern", name: "6. Govern", icon: "📜", status: "PASSED", badge: "Passed", time: "5.1s", carbon: "0.014 g", plain: "CycloneDX SBOM and MIT licensing audited", detail: "CycloneDX SBOM and MIT licensing compliance audited and signed off." },

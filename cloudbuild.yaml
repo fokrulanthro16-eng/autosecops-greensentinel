@@ -1,0 +1,61 @@
+# ==============================================================================
+# Google Cloud Build Pipeline for AutoSecOps GreenSentinel
+# Target: Low-Carbon Deployment to Google Cloud Run (Google Cloud Bonus +0.2 pts)
+# Standard: Green Software Foundation (GSF) Software Carbon Intensity Audited
+# ==============================================================================
+
+steps:
+  # STEP 1: Multi-stage Lean Container Build with BuildKit Caching
+  - name: 'gcr.io/kaniko-project/executor:latest'
+    args:
+      - '--destination=${_AR_LOCATION}-docker.pkg.dev/$PROJECT_ID/greensentinel/app:$SHORT_SHA'
+      - '--destination=${_AR_LOCATION}-docker.pkg.dev/$PROJECT_ID/greensentinel/app:latest'
+      - '--cache=true'
+      - '--cache-ttl=72h'
+      - '--dockerfile=Dockerfile'
+      - '--context=dir://.'
+    id: 'build-low-carbon-container'
+
+  # STEP 2: Standalone GSF Software Carbon Intensity (SCI) Audit
+  - name: 'python:3.11-slim'
+    entrypoint: 'python'
+    args:
+      - 'scripts/calculate_sci.py'
+      - '--runtime-seconds=95'
+      - '--region=${_DEPLOY_REGION}'
+      - '--instances=1'
+      - '--output-file=cloudbuild-sci-audit.json'
+    id: 'gsf-carbon-intensity-audit'
+
+  # STEP 3: Google Cloud Run Zero-Downtime Deployment to Lowest-Carbon Region
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'autosecops-greensentinel'
+      - '--image=${_AR_LOCATION}-docker.pkg.dev/$PROJECT_ID/greensentinel/app:$SHORT_SHA'
+      - '--region=${_DEPLOY_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--cpu=2'
+      - '--memory=1Gi'
+      - '--concurrency=80'
+      - '--min-instances=0'
+      - '--max-instances=10'
+      - '--set-env-vars=GCP_REGION=${_DEPLOY_REGION},GSF_OPTIMIZED=true,LATENCY_SLA_MS=300'
+      - '--port=8080'
+    id: 'deploy-google-cloud-run'
+
+substitutions:
+  _AR_LOCATION: 'europe-west9'
+  _DEPLOY_REGION: 'europe-west9'  # Paris, France: 51 gCO2/kWh (96% Clean Nuclear/Solar Grid)
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+artifacts:
+  objects:
+    location: 'gs://$PROJECT_ID-greensentinel-artifacts/build-$BUILD_ID'
+    paths:
+      - 'cloudbuild-sci-audit.json'
